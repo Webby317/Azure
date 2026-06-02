@@ -1,0 +1,14 @@
+Write-Output "Applying security hardening..."
+
+# Disable SMBv1
+Set-SmbServerConfiguration -EnableSMB1Protocol $false -Force
+
+# Enable firewall
+Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled True
+
+# Install Azure Monitor Agent
+Invoke-WebRequest -Uri https://aka.ms/InstallAzureMonitorAgent -OutFile AMA.exe
+Start-Process AMA.exe -ArgumentList "/quiet" -Wait
+
+# RDP timeout
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server" -Name IdleTimeout -Value 900000
